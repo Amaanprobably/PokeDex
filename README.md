@@ -46,7 +46,11 @@ A modern, robust Android application that displays Pokémon data using the Poké
 * **Compose Optimization:** To optimize the UI, I assigned unique `key` parameters to the Compose list items, drastically reducing unnecessary recompositions and keeping the scrolling buttery smooth.
 ## 📸 Screenshots
 
-*(Screenshots coming soon!)*
+<img src="https://github.com/user-attachments/assets/3de5851e-1792-45df-844e-f41891a9d437" width="30%" />
+&nbsp; &nbsp; &nbsp; &nbsp;
+<img src="https://github.com/user-attachments/assets/e5554614-98f3-4436-902f-a040d1f14b0c" width="30%" />
+&nbsp; &nbsp; &nbsp; &nbsp;
+<img src="https://github.com/user-attachments/assets/e24a752d-53c6-44dd-bd6a-1ffc51712e49" width="30%" />
 
 ## 🏗 Setup & Installation
 
@@ -59,5 +63,3 @@ A modern, robust Android application that displays Pokémon data using the Poké
 3. Sync the Gradle files.
 
 4. Build and run the app on an Android Emulator or physical device.
-
-
