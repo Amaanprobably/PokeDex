@@ -10,7 +10,6 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import com.example.pokedexapp.data.worker.SyncSearchWorker
 import com.example.pokedexapp.di.appModule
-import okhttp3.OkHttp
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger

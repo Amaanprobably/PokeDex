@@ -1,10 +1,8 @@
 package com.example.pokedexapp.data.local
 
-import androidx.compose.runtime.Immutable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Immutable
 @Entity(tableName = "pokemon_table")
 data class PokemonEntity(
     @PrimaryKey val id: Int,

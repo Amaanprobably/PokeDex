@@ -4,8 +4,10 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.room.Room
 import com.example.pokedexapp.data.local.PokemonDatabase
 import com.example.pokedexapp.data.remote.PokeApi
-import com.example.pokedexapp.data.repository.PokemonRepository
-import com.example.pokedexapp.presentation.PokemonViewModel
+import com.example.pokedexapp.data.repository.PokemonRepositoryImpl
+import com.example.pokedexapp.domain.repository.PokemonRepository
+import com.example.pokedexapp.presentation.detail.DetailViewModel
+import com.example.pokedexapp.presentation.list.ListViewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import okhttp3.OkHttpClient
@@ -17,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 val appModule = module {
     single {
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY // Shows full JSON response
+            level = HttpLoggingInterceptor.Level.BODY
         }
         val client = OkHttpClient.Builder()
         .addInterceptor(logging)
@@ -36,10 +38,13 @@ val appModule = module {
     single {
         get<PokemonDatabase>().dao
     }
-    single {
-        PokemonRepository(get(),get())
+    single<PokemonRepository> {
+        PokemonRepositoryImpl(get(),get())
     }
     viewModel {
-        PokemonViewModel(get(),get())
+        ListViewModel(get(),get())
+    }
+    viewModel {
+        DetailViewModel(get(),get())
     }
 }

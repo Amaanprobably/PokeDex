@@ -1,14 +1,27 @@
 package com.example.pokedexapp.data.remote.responses
 
+import com.google.gson.annotations.SerializedName
+
 data class Sprites(
-    val back_default: String,
-    val back_female: String?,
-    val back_shiny: String,
-    val back_shiny_female: String?,
+
+    val other: Other
+
+)
+
+
+data class Other(
+
+    @SerializedName("official-artwork")
+
+    val officialArtwork: OfficialArtwork
+
+)
+
+
+data class OfficialArtwork(
+
     val front_default: String,
-    val front_female: String?,
-    val front_shiny: String,
-    val front_shiny_female: String?,
-    val other: Other,
-    val versions: Versions
+
+    val front_shiny: String?
+
 )

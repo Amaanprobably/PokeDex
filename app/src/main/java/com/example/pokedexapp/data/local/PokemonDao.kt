@@ -22,16 +22,13 @@ interface PokemonDao {
     fun pagingSource() : PagingSource<Int, PokemonEntity>
 
     @Query("Delete from pokemon_table")
-    suspend fun clearAll()
+    suspend fun clearAllPokemon()
 
     @Query("Select * from pokemon_table where name like '%' || :query || '%'")
     fun searchPokemon(query: String) : Flow<List<PokemonEntity>>
 
     @Query("SELECT * FROM pokemon_table WHERE id = :id")
     suspend fun getPokemonById(id : Int): PokemonEntity?
-
-    @Query("SELECT * FROM pokemon_table WHERE name IN (:names)")
-    fun getPokemonListByNames(names: List<String>): Flow<List<PokemonEntity>>
 
     @Query("SELECT * FROM remote_keys WHERE pokemonId = :pokemonId")
     suspend fun getRemoteKeys(pokemonId: Int): RemoteKeys?

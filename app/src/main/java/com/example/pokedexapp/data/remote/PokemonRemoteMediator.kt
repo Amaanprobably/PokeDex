@@ -10,6 +10,7 @@ import com.example.pokedexapp.data.local.PokemonEntity
 import com.example.pokedexapp.data.local.RemoteKeys
 import com.example.pokedexapp.data.mappers.toEntity
 import com.example.pokedexapp.data.remote.PokeQueries.POKEMON_LIST_QUERY
+import com.example.pokedexapp.data.remote.responses.GraphQlQuery
 import okio.IOException
 import retrofit2.HttpException
 import kotlin.collections.emptyList
@@ -58,7 +59,7 @@ class PokemonRemoteMediator(
             pokeDb.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     pokeDb.dao.clearRemoteKeys()
-                    pokeDb.dao.clearAll()
+                    pokeDb.dao.clearAllPokemon()
                 }
                 val prevKey = if (page == 0) null else page - 40
                 val nextKey = if (endOfPaginationReached) null else page + 40
