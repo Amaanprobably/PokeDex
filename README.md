@@ -56,7 +56,7 @@ A modern, robust Android application that displays Pokémon data using the Poké
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/YourUsername/PokedexApp.git](https://github.com/YourUsername/PokedexApp.git)
+   git clone [https://github.com/Amaanprobably/PokeDex.git](https://github.com/Amaanprobably/PokeDex.git)
    
 2. Open the project in Android Studio (Ladybug or newer recommended).
 
