@@ -52,6 +52,10 @@ A modern, robust Android application that displays Pokémon data using the Poké
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img src="https://github.com/user-attachments/assets/e24a752d-53c6-44dd-bd6a-1ffc51712e49" width="30%" />
 
+## 🗺️ Future Scope & Known Issues
+* **Responsive Layouts:** The current UI is specifically optimized for standard portrait-mode mobile phones. Dynamic screen-size scaling (utilizing percentage-based modifiers and adaptive layouts for tablets or foldables) is planned for a future update.
+* **Orientation:** Landscape mode is currently unoptimized to preserve the fidelity of the Shared Element Transitions.
+
 ## 🏗 Setup & Installation
 
 1. Clone the repository:
