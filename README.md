@@ -16,7 +16,7 @@ A modern, robust Android application that displays Pokémon data using the Poké
 ## 🛠 Tech Stack
 
 * **UI:** Jetpack Compose (Material 3)
-* **Architecture:** MVVM (Model-View-ViewModel) with Clean Architecture principles
+* **Architecture:** Modern Android Architecture (MVVM + Repository Pattern) - utilizing Dependency Inversion for clear separation of concerns.
 * **Database & Caching:** Room Persistence Library
 * **Pagination:** Paging 3 (`RemoteMediator` & `RemoteKeys`)
 * **Networking:** Retrofit with GraphQL
