@@ -44,7 +44,7 @@ class PokemonViewModel(
                 .map { it.firstOrNull()?.state }
                 .filter { it == WorkInfo.State.SUCCEEDED }
                 .collect {
-                    refreshTrigger.emit(Unit)   // forces requery
+                    refreshTrigger.emit(Unit)
                 }
         }
     }
@@ -61,6 +61,7 @@ class PokemonViewModel(
                 else -> UiState.Loading
             }
         }
+        .onStart { emit(UiState.Loading) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import androidx.navigation.NavType
@@ -48,10 +49,15 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                 modifier = Modifier.padding(),
                                 animatedVisibilityScope = this,
                                 onItemClick = { id, origin ->
-                                    viewModel.getPokemonDetails(id)
-                                    navController.navigate(
-                                        Routes.POKEMON_DETAIL_SCREEN.withArgs(id,origin)
-                                    )
+                                    val currentState = navController.currentBackStackEntry?.lifecycle?.currentState
+                                    if(currentState == Lifecycle.State.RESUMED) {
+                                        viewModel.getPokemonDetails(id)
+                                        navController.navigate(
+                                            Routes.POKEMON_DETAIL_SCREEN.withArgs(id, origin)
+                                        ) {
+                                            launchSingleTop = true
+                                        }
+                                    }
                                 },
                                 pokemonList = pokemonList,
                                 onSearch = { query ->
