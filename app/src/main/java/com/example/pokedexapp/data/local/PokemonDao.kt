@@ -32,4 +32,13 @@ interface PokemonDao {
 
     @Query("SELECT * FROM pokemon_table WHERE name IN (:names)")
     fun getPokemonListByNames(names: List<String>): Flow<List<PokemonEntity>>
+
+    @Query("SELECT * FROM remote_keys WHERE pokemonId = :pokemonId")
+    suspend fun getRemoteKeys(pokemonId: Int): RemoteKeys?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllRemoteKeys(remoteKeys: List<RemoteKeys>)
+
+    @Query("DELETE FROM remote_keys")
+    suspend fun clearRemoteKeys()
 }

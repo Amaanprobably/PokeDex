@@ -49,6 +49,13 @@ import coil.compose.AsyncImage
 import com.example.pokedexapp.data.local.PokemonEntity
 import com.example.pokedexapp.ui.theme.RobotoCondensed
 import com.example.pokedexapp.R.drawable
+import com.example.pokedexapp.ui.theme.AtkColor
+import com.example.pokedexapp.ui.theme.DefColor
+import com.example.pokedexapp.ui.theme.HPColor
+import com.example.pokedexapp.ui.theme.SpAtkColor
+import com.example.pokedexapp.ui.theme.SpDefColor
+import com.example.pokedexapp.ui.theme.SpdColor
+
 @Composable
 fun SharedTransitionScope.DetailScreen(
     pokemonId: Int,
@@ -189,17 +196,17 @@ fun SharedTransitionScope.DetailScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        StatBar(name = "HP", value = pokemon!!.hp, color = Color.Green)
+                        StatBar(name = "HP", value = pokemon!!.hp, color = HPColor)
                         Spacer(modifier = Modifier.height(10.dp))
-                        StatBar(name = "ATK", value = pokemon!!.attack, color = Color.Red)
+                        StatBar(name = "ATK", value = pokemon!!.attack, color = AtkColor)
                         Spacer(modifier = Modifier.height(10.dp))
-                        StatBar(name = "DEF", value = pokemon!!.defense, color = Color.Yellow)
+                        StatBar(name = "DEF", value = pokemon!!.defense, color = DefColor)
                         Spacer(modifier = Modifier.height(10.dp))
-                        StatBar(name = "SPD", value = pokemon!!.speed, color = Color.Blue)
+                        StatBar(name = "SPD", value = pokemon!!.speed, color = SpdColor)
                         Spacer(modifier = Modifier.height(10.dp))
-                        StatBar(name = "SP-ATK", value = pokemon!!.specialAttack, color = Color.Magenta)
+                        StatBar(name = "SP-ATK", value = pokemon!!.specialAttack, color = SpAtkColor)
                         Spacer(modifier = Modifier.height(10.dp))
-                        StatBar(name = "SP-DEF", value = pokemon!!.specialDefense, color = Color(0xFF673AB7))
+                        StatBar(name = "SP-DEF", value = pokemon!!.specialDefense, color = SpDefColor)
 
                     }
                 }

@@ -7,6 +7,7 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.example.pokedexapp.data.local.PokemonDatabase
 import com.example.pokedexapp.data.local.PokemonEntity
+import com.example.pokedexapp.data.local.RemoteKeys
 import com.example.pokedexapp.data.mappers.toEntity
 import com.example.pokedexapp.data.remote.PokeQueries.POKEMON_LIST_QUERY
 import okio.IOException
@@ -23,40 +24,81 @@ class PokemonRemoteMediator(
         state: PagingState<Int, PokemonEntity>
     ): MediatorResult {
         return try {
-            val offset = when (loadType) {
-                LoadType.REFRESH -> 0
-                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+            val page = when (loadType) {
+                LoadType.REFRESH -> {
+                    val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+                    remoteKeys?.nextKey?.minus(40) ?: 0
+                }
+                LoadType.PREPEND -> {
+                    val remoteKeys = getRemoteKeyForFirstItem(state)
+                    val prevKey = remoteKeys?.prevKey
+                        ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    prevKey
+                }
                 LoadType.APPEND -> {
-                    val lastItem = state.lastItemOrNull()
-                    if (lastItem == null) return MediatorResult.Success(endOfPaginationReached = true)
-                    else state.pages.sumOf { it.data.size }
+                    val remoteKeys = getRemoteKeyForLastItem(state)
+                    val nextKey = remoteKeys?.nextKey
+                        ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    nextKey
                 }
             }
             val query = POKEMON_LIST_QUERY
             val response = pokeApi.getPokemonByQuery(
                 GraphQlQuery(
                     query = query,
-                    variables = mapOf("limit" to state.config.pageSize, "offset" to offset)
+                    variables = mapOf("limit" to state.config.pageSize, "offset" to page)
                 )
             )
             val rawData = response.data?.pokemon ?: emptyList()
+            val endOfPaginationReached = rawData.isEmpty()
 
             val entities = rawData.map { gql ->
                 gql.toEntity()
             }
             pokeDb.withTransaction {
                 if (loadType == LoadType.REFRESH) {
+                    pokeDb.dao.clearRemoteKeys()
                     pokeDb.dao.clearAll()
                 }
+                val prevKey = if (page == 0) null else page - 40
+                val nextKey = if (endOfPaginationReached) null else page + 40
+
+                val keys = rawData.map {
+                    RemoteKeys(pokemonId = it.id, prevKey = prevKey, nextKey = nextKey)
+                }
+                pokeDb.dao.insertAllRemoteKeys(keys)
                 pokeDb.dao.insertAllPokemon(entities)
             }
-            MediatorResult.Success(endOfPaginationReached = rawData.isEmpty())
+            MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         }
         catch (e: HttpException){
             MediatorResult.Error(e)
         }
         catch (e: IOException){
             MediatorResult.Error(e)
+        }
+    }
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, PokemonEntity>): RemoteKeys? {
+        // Get the last item that was successfully loaded
+        return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
+            ?.let { pokemon ->
+                // Look up the key for this specific pokemon
+                pokeDb.dao.getRemoteKeys(pokemon.id)
+            }
+    }
+
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, PokemonEntity>): RemoteKeys? {
+        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
+            ?.let { pokemon ->
+                pokeDb.dao.getRemoteKeys(pokemon.id)
+            }
+    }
+
+    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, PokemonEntity>): RemoteKeys? {
+        return state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?.id?.let { repoId ->
+                pokeDb.dao.getRemoteKeys(repoId)
+            }
         }
     }
 }
