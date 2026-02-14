@@ -27,23 +27,13 @@ A modern, robust Android application that displays Pokémon data using the Poké
 
 ## 🧠 Technical Challenges & Solutions
 
-### 👻 The "Ghost Data" Pagination Conflict
-> **The Problem:** I wanted a lightning-fast local search, so I built a background `SyncWorker` to cache 1,000 basic Pokémon entries. However, this completely broke my main list's pagination. Paging 3 calculates its next offset based on database size. Seeing 1,000 items (which I call "ghost data" since they lacked full details), the paginator assumed the list was fully loaded and permanently stuck the infinite scroll at page one.
-
-**The Fix:** I implemented a **RemoteKeys** architecture. By storing explicit API offsets in a dedicated `remote_keys` table, the pagination logic became 100% independent of the main data table. The paginator now smoothly ignores the background search data and fetches the correct next page every time.
-
-
 ### 🪶 Keeping the App Lean (4-10MB) & Fast
 > **The Challenge:** Downloading 1,000 full Pokémon profiles at launch would bloat the app size and kill performance.
 
-**The Fix:** I designed an independent, lightweight search mechanism. The background sync only pulls the bare minimum (names and sprite URLs) into the database. The heavy data is only fetched on-demand when a user clicks a specific Pokémon. This keeps the final APK size incredibly small (under 10MB) without compromising the user experience.
+**The Fix:** I designed an independent, lightweight search mechanism. The background sync only pulls the bare minimum (names and sprite URLs) into the database to ensure flawless searching. The heavy data is only fetched on-demand when a user clicks a specific Pokémon. This keeps the final APK size incredibly small (under 10MB) without compromising the user experience.
 
-
-### 🐛 Squashing UI Glitches (Double-Taps & Recompositions)
-> **The Challenge:** In Compose, users could tap two Pokémon simultaneously, causing the app stack multiple detail screens on top of each other or have glitchy animation. Additionally, the list was doing too much work redrawing items during scrolls.
-
-**The Fix:** - **Safe Navigation:** I eliminated the multi-touch navigation bug by intercepting clicks and checking the `NavController`'s `Lifecycle.State.RESUMED` status before triggering any transitions.
 * **Compose Optimization:** To optimize the UI, I assigned unique `key` parameters to the Compose list items, drastically reducing unnecessary recompositions and keeping the scrolling buttery smooth.
+
 ## 📸 Screenshots
 
 <img src="https://github.com/user-attachments/assets/3de5851e-1792-45df-844e-f41891a9d437" width="30%" />
