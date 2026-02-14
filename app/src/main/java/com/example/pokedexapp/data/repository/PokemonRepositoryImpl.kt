@@ -33,7 +33,7 @@ class PokemonRepositoryImpl(
     // The Main Feed (With API Sync)
     override fun getPokemonList(): Flow<PagingData<Pokemon>> {
         return Pager(
-            config = PagingConfig(pageSize = 40, initialLoadSize = 40, prefetchDistance = 10),
+            config = PagingConfig(pageSize = 40, initialLoadSize = 40, prefetchDistance = 20),
             remoteMediator = PokemonRemoteMediator(api,db),
             pagingSourceFactory = {
                 db.dao.pagingSource()
@@ -82,7 +82,7 @@ class PokemonRepositoryImpl(
     override suspend fun syncSearchIndex() {
         withContext(Dispatchers.IO) {
             try {
-                val response = api.getAllPokemon(limit = 1025, offset = 0)
+                val response = api.getAllPokemon(limit = 2000, offset = 0)
 
                 val allPokemonEntities = response.results.map { result ->
 

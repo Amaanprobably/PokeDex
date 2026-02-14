@@ -60,10 +60,10 @@ fun ErrorScreen(
         contentAlignment = Alignment.Center
     )
     {
-        Column {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = message ?: "Unknown Error Occurred",
-                fontSize = 24.sp,
+                fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 2
             )
