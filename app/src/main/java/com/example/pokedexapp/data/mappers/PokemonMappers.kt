@@ -3,6 +3,7 @@ package com.example.pokedexapp.data.mappers
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.example.pokedexapp.data.local.PokemonEntity
+import com.example.pokedexapp.data.local.search.SearchPokemonEntity
 import com.example.pokedexapp.data.remote.responses.PokemonGql
 import com.example.pokedexapp.data.remote.responses.Sprites
 import com.example.pokedexapp.domain.model.Pokemon
@@ -70,6 +71,24 @@ fun PokemonEntity.toDomain(): Pokemon {
         specialAttack = specialAttack,
         specialDefense = specialDefense,
         dominantColor = dominantColor
+    )
+}
+fun SearchPokemonEntity.toDomain(): Pokemon {
+    return Pokemon(
+        id = this.id,
+        name = this.name,
+        imageSprite = this.imageSprite,
+        url = "",
+        types = emptyList(),
+        hp = 0,
+        attack = 0,
+        defense = 0,
+        specialAttack = 0,
+        specialDefense = 0,
+        speed = 0,
+        height = 0.0,
+        weight = 0.0,
+        dominantColor = 0
     )
 }
 fun PokemonGql.getStat(statName: String): Int {

@@ -1,12 +1,15 @@
 package com.example.pokedexapp.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
@@ -17,6 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.example.pokedexapp.presentation.detail.DetailScreen
 import com.example.pokedexapp.presentation.detail.DetailViewModel
 import com.example.pokedexapp.presentation.list.ListScreen
@@ -24,6 +29,7 @@ import com.example.pokedexapp.presentation.list.ListViewModel
 import com.example.pokedexapp.presentation.navigation.Routes
 import com.example.pokedexapp.presentation.theme.PokeDexAppTheme
 import org.koin.androidx.compose.koinViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
 
 class MainActivity : ComponentActivity(), KoinComponent {
@@ -31,6 +37,21 @@ class MainActivity : ComponentActivity(), KoinComponent {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val workManager = WorkManager.getInstance(applicationContext)
+            val viewModel: ListViewModel by viewModel()
+
+            val workInfos by workManager
+                .getWorkInfosForUniqueWorkLiveData("PokemonSearchSync")
+                .observeAsState()
+
+            LaunchedEffect(workInfos) {
+                val currentWork = workInfos?.firstOrNull()
+
+                if (currentWork?.state == WorkInfo.State.SUCCEEDED) {
+                    Log.d("PokedexSync","PokemonSearchSync finished. Refreshing list")
+                    viewModel.refresh()
+                }
+            }
             PokeDexAppTheme {
                 SharedTransitionLayout {
                     val navController = rememberNavController()
@@ -40,9 +61,9 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     )
                     {
                         composable(Routes.POKEMON_LIST_SCREEN.route) {
-
                             val viewModel: ListViewModel = koinViewModel()
-                            val pokemonList = viewModel.pokemonPagingFlow.collectAsLazyPagingItems()
+                            val pokemonList =
+                                viewModel.pokemonPagingFlow.collectAsLazyPagingItems()
                             val searchList by viewModel.searchResults.collectAsStateWithLifecycle(
                                 initialValue = emptyList()
                             )

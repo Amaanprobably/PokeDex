@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,7 +51,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.pokedexapp.R
@@ -67,7 +68,6 @@ import com.example.pokedexapp.domain.model.Pokemon
 import com.example.pokedexapp.presentation.components.ErrorScreen
 import com.example.pokedexapp.presentation.components.LoadingScreen
 import com.example.pokedexapp.presentation.theme.RobotoCondensed
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,10 +81,6 @@ fun SharedTransitionScope.ListScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-    val filteredPokemon = remember(searchQuery) {
-        if (searchQuery.isBlank()) emptyList()
-        else searchList.filter { it.name.contains(searchQuery, ignoreCase = true) }
-    }
     Scaffold(
         topBar = {
             Column(
@@ -112,10 +108,9 @@ fun SharedTransitionScope.ListScreen(
                             onQueryChange = {
                                 searchQuery = it
                                 onSearch(it)
-                                active = (it.isNotBlank() && filteredPokemon.isNotEmpty())
+                                active = (it.isNotBlank())
                             },
                             onSearch = {
-                                onSearch(searchQuery)
                                 active = false
                             },
                             expanded = active,
@@ -150,7 +145,7 @@ fun SharedTransitionScope.ListScreen(
                     onExpandedChange = { active = it },
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                 ) {
-                    if (filteredPokemon.isNotEmpty()) {
+                    if (searchList.isNotEmpty()) {
                         LazyColumn(
                             modifier = Modifier.animateContentSize()
                                 .fillMaxWidth()
@@ -191,29 +186,21 @@ fun SharedTransitionScope.ListScreen(
             }
         }
     ) { innerPadding ->
-        if (pokemonList.loadState.refresh is LoadState.Error) {
-            ErrorScreen((pokemonList.loadState.refresh as LoadState.Error).error.message) {
-                pokemonList.refresh()
-            }
-        }
-        if (pokemonList.loadState.refresh is LoadState.Loading) {
-            LoadingScreen(padding = innerPadding)
-        } else {
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             LazyVerticalGrid(
-                modifier = modifier.fillMaxSize().padding(innerPadding)
-                    .background(Color.White),
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
+                    modifier = modifier.fillMaxSize().background(Color.White),
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
                 items(
                     pokemonList.itemCount,
-                    key = { UUID.randomUUID() })
+                    key = pokemonList.itemKey { it.id })
                 { index ->
-                    var isLoading by remember { mutableStateOf(true) }
                     val pokemon = pokemonList[index]
                     if (pokemon != null) {
+                        var isLoading by remember(pokemon.id) { mutableStateOf(true) }
                         val animatedColor by animateColorAsState(
                             targetValue = Color(pokemon.dominantColor),
                             animationSpec = tween(durationMillis = 500),
@@ -266,11 +253,13 @@ fun SharedTransitionScope.ListScreen(
                                     AsyncImage(
                                         model = imageRequest,
                                         contentDescription = pokemon.name,
-                                        filterQuality = FilterQuality.Medium,
+                                        //filterQuality = FilterQuality.Medium,
                                         modifier = Modifier
                                             .size(150.dp)
                                             .sharedElement(
-                                                sharedContentState = rememberSharedContentState(key = "list-image-${pokemon.id}"),
+                                                sharedContentState = rememberSharedContentState(
+                                                    key = "list-image-${pokemon.id}"
+                                                ),
                                                 animatedVisibilityScope = animatedVisibilityScope,
                                             ),
                                         onSuccess = {
@@ -288,6 +277,25 @@ fun SharedTransitionScope.ListScreen(
                             }
                         }
                     }
+                }
+                if (pokemonList.loadState.append is LoadState.Loading) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Box(
+                            Modifier.fillMaxWidth().padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+            }
+            if (pokemonList.loadState.refresh is LoadState.Loading && pokemonList.itemCount == 0) {
+                LoadingScreen(padding = PaddingValues(0.dp))
+            }
+
+            if (pokemonList.loadState.refresh is LoadState.Error && pokemonList.itemCount == 0) {
+                ErrorScreen((pokemonList.loadState.refresh as LoadState.Error).error.message) {
+                    pokemonList.refresh()
                 }
             }
         }

@@ -14,7 +14,7 @@ android {
         applicationId = "com.example.pokedexapp"
         minSdk = 33
         targetSdk = 36
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -37,6 +37,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 ksp{
@@ -46,7 +47,7 @@ ksp{
 dependencies {
 
     implementation(platform(libs.androidx.compose.bom))
-
+    implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)

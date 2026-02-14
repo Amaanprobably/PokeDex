@@ -1,5 +1,6 @@
 package com.example.pokedexapp.data.remote
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -24,6 +25,7 @@ class PokemonRemoteMediator(
         loadType: LoadType,
         state: PagingState<Int, PokemonEntity>
     ): MediatorResult {
+        Log.d("PokedexSync","MEDIATOR FIRED: $loadType")
         return try {
             val page = when (loadType) {
                 LoadType.REFRESH -> {
@@ -80,10 +82,8 @@ class PokemonRemoteMediator(
         }
     }
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, PokemonEntity>): RemoteKeys? {
-        // Get the last item that was successfully loaded
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { pokemon ->
-                // Look up the key for this specific pokemon
                 pokeDb.dao.getRemoteKeys(pokemon.id)
             }
     }

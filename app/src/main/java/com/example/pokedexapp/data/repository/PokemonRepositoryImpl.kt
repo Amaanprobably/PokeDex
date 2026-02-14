@@ -1,5 +1,6 @@
 package com.example.pokedexapp.data.repository
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -8,6 +9,8 @@ import androidx.paging.map
 import com.example.pokedexapp.data.local.PokemonDatabase
 import com.example.pokedexapp.domain.model.Pokemon
 import com.example.pokedexapp.data.local.PokemonEntity
+import com.example.pokedexapp.data.local.search.SearchDatabase
+import com.example.pokedexapp.data.local.search.SearchPokemonEntity
 import com.example.pokedexapp.data.mappers.toDomain
 import com.example.pokedexapp.data.mappers.toEntity
 import com.example.pokedexapp.data.remote.responses.GraphQlQuery
@@ -21,17 +24,16 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import timber.log.Timber
-
 @OptIn(ExperimentalPagingApi::class)
 class PokemonRepositoryImpl(
     val db: PokemonDatabase,
-    val api: PokeApi
+    val api: PokeApi,
+    val searchDb: SearchDatabase
 ) : PokemonRepository {
     // The Main Feed (With API Sync)
     override fun getPokemonList(): Flow<PagingData<Pokemon>> {
         return Pager(
-            config = PagingConfig(pageSize = 40),
+            config = PagingConfig(pageSize = 40, initialLoadSize = 40, prefetchDistance = 10),
             remoteMediator = PokemonRemoteMediator(api,db),
             pagingSourceFactory = {
                 db.dao.pagingSource()
@@ -41,9 +43,9 @@ class PokemonRepositoryImpl(
         }
     }
 
-    // Search (Local Only)
+    // Search (Local Only - SearchDatabase)
     override fun searchPokemon(query: String): Flow<List<Pokemon>> {
-        return db.dao.searchPokemon(query).map { list ->
+        return searchDb.dao.searchPokemon(query).map { list ->
             list.map { entity -> entity.toDomain() }
         }
     }
@@ -70,25 +72,32 @@ class PokemonRepositoryImpl(
                 } ?: emit(null)
             }
             catch(e:Exception){
-                Timber.e(e, "Failed to fetch details")
+                Log.e("PokemonDetails","Unknown error occured",e)
                 emit(null)
             }
         }.flowOn(Dispatchers.IO)
     }
 
-    // One time sync - handled by WorkManager
+    //Sync to SearchDatabase
     override suspend fun syncSearchIndex() {
         withContext(Dispatchers.IO) {
-            val response =
-                api.getPokemonByQuery(GraphQlQuery(PokeQueries.SEARCH_LIST_QUERY, emptyMap()))
-            val namesOnly = response.data?.pokemon?.map {
-                PokemonEntity(
-                    id = it.id,
-                    name = it.name,
-                    imageSprite = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${it.id}.png"
-                )
-            } ?: emptyList()
-            db.dao.insertSearchNames(namesOnly)
+            try {
+                val response = api.getAllPokemon(limit = 1025, offset = 0)
+
+                val allPokemonEntities = response.results.map { result ->
+
+                    val id = result.url.trimEnd('/').substringAfterLast('/').toInt()
+
+                    SearchPokemonEntity(
+                        id = id,
+                        name = result.name,
+                        imageSprite = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png"
+                    )
+                }
+                searchDb.dao.insertSearchNames(allPokemonEntities)
+            } catch (e: Exception) {
+                Log.e("PokedexSync","Crash in Sync Worker",e)
+            }
         }
     }
 }
