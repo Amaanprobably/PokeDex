@@ -1,5 +1,6 @@
 package com.example.pokedexapp.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -55,28 +56,24 @@ fun ErrorScreen(
     message: String?,
     Retry: () -> Unit
 ){
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    )
-    {
-        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = message ?: "Unknown Error Occurred",
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 2
+        )
+        Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+        Button(onClick = { Retry() })
+        {
             Text(
-                text = message ?: "Unknown Error Occurred",
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2
+                text = "Retry",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
             )
-            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-            Button(onClick = {
-                Retry()
-            }) {
-                Text(
-                    text = "Retry",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
         }
     }
 }
