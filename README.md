@@ -35,8 +35,7 @@ A modern, robust Android application that displays Pokémon data using the Poké
 <img width="70%" alt="finalarch" src="https://github.com/user-attachments/assets/3c80c1f4-4c88-4863-af2c-0fbab8e7852b" />
 
 ---
-The app follows MVVM with a unidirectional data flow. The UI never talks to the data layer directly — all state flows down through the ViewModel and all events flow up through it. The two Room databases are intentionally isolated from each other; this is a key architectural decision explained below.
-
+The app follows MVVM with a unidirectional data flow. The UI never talks to the data layer directly — all state flows down through the ViewModel and all events flow up through it.
 ## 🧠 Key Engineering Decisions
 
 ### 🪶 1. Lean Data Strategy — Fetch Only What's Needed, When It's Needed
@@ -51,7 +50,7 @@ The app follows MVVM with a unidirectional data flow. The UI never talks to the 
 
 > **🚨 The Challenge:** > Paging 3 relies heavily on Room's Invalidation Tracker to know when to refresh the UI. Initially, whenever the background `SyncWorker` updated the local cache or a search query was executed, Room would automatically invalidate the shared tables. This caused the main `Pager` to emit a redundant loading state, resulting in jarring "double loading" screens and interrupting the Compose UI animations.
 
-**🛠️ The Solution:** I engineered a decoupled database architecture. By isolating the Search mechanism into its own dedicated database/table structure, completely separate from the main Paging 3 database, I severed the invalidation link. Now, background syncs and search queries update their respective data silos without triggering false invalidations on the main paged list. The result? A buttery-smooth, glitch-free UI that never loads the same data twice.
+**🛠️ The Solution:** I engineered a decoupled database architecture. By isolating the Search mechanism into its own dedicated table structure, completely separate from the main Paging 3 database, I severed the invalidation link. Now, background syncs and search queries update their respective data silos without triggering false invalidations on the main paged list. The result? A buttery-smooth, glitch-free UI that never loads the same data twice.
 
 ### 🧠 3. Why GraphQL Over the REST Endpoint
 
