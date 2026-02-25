@@ -32,7 +32,7 @@ A modern, robust Android application that displays Pokémon data using the Poké
 
 ## 🏗 Architecture Overview
 
-<img width="70%" alt="finalarch" src="https://github.com/user-attachments/assets/3c80c1f4-4c88-4863-af2c-0fbab8e7852b" />
+<img width="70%" height="752" alt="1000238046" src="https://github.com/user-attachments/assets/a3ea2715-2861-4060-ad85-c836a772d128" />
 
 ---
 The app follows MVVM with a unidirectional data flow. The UI never talks to the data layer directly — all state flows down through the ViewModel and all events flow up through it.
