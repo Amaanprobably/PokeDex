@@ -9,8 +9,7 @@ import androidx.paging.map
 import com.example.pokedexapp.data.local.PokemonDatabase
 import com.example.pokedexapp.domain.model.Pokemon
 import com.example.pokedexapp.data.local.PokemonEntity
-import com.example.pokedexapp.data.local.search.SearchDatabase
-import com.example.pokedexapp.data.local.search.SearchPokemonEntity
+import com.example.pokedexapp.data.local.SearchPokemonEntity
 import com.example.pokedexapp.data.mappers.toDomain
 import com.example.pokedexapp.data.mappers.toEntity
 import com.example.pokedexapp.data.remote.responses.GraphQlQuery
@@ -27,8 +26,7 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalPagingApi::class)
 class PokemonRepositoryImpl(
     val db: PokemonDatabase,
-    val api: PokeApi,
-    val searchDb: SearchDatabase
+    val api: PokeApi
 ) : PokemonRepository {
     // The Main Feed (With API Sync)
     override fun getPokemonList(): Flow<PagingData<Pokemon>> {
@@ -45,7 +43,7 @@ class PokemonRepositoryImpl(
 
     // Search (Local Only - SearchDatabase)
     override fun searchPokemon(query: String): Flow<List<Pokemon>> {
-        return searchDb.dao.searchPokemon(query).map { list ->
+        return db.dao.searchPokemon(query).map { list ->
             list.map { entity -> entity.toDomain() }
         }
     }
@@ -94,7 +92,7 @@ class PokemonRepositoryImpl(
                         imageSprite = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png"
                     )
                 }
-                searchDb.dao.insertSearchNames(allPokemonEntities)
+                db.dao.insertSearchNames(allPokemonEntities)
             } catch (e: Exception) {
                 Log.e("PokedexSync","Crash in Sync Worker",e)
             }

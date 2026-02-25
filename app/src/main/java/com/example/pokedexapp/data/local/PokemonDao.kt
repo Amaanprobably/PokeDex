@@ -5,9 +5,12 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PokemonDao {
+
+    //PokemonEntity
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllPokemon(pokemon: List<PokemonEntity>)
 
@@ -23,6 +26,15 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon_table WHERE id = :id")
     suspend fun getPokemonById(id : Int): PokemonEntity?
 
+    //SearchPokemonEntity
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSearchNames(searchNames: List<SearchPokemonEntity>)
+
+    @Query("SELECT * FROM search_table WHERE name LIKE '%' || :query || '%'")
+    fun searchPokemon(query: String): Flow<List<SearchPokemonEntity>>
+
+    // RemoteKeys
     @Query("SELECT * FROM remote_keys WHERE pokemonId = :pokemonId")
     suspend fun getRemoteKeys(pokemonId: Int): RemoteKeys?
 
