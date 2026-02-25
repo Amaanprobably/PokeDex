@@ -3,7 +3,6 @@ package com.example.pokedexapp.di
 import androidx.paging.ExperimentalPagingApi
 import androidx.room.Room
 import com.example.pokedexapp.data.local.PokemonDatabase
-import com.example.pokedexapp.data.local.search.SearchDatabase
 import com.example.pokedexapp.data.remote.PokeApi
 import com.example.pokedexapp.data.repository.PokemonRepositoryImpl
 import com.example.pokedexapp.domain.repository.PokemonRepository
@@ -37,16 +36,10 @@ val appModule = module {
         Room.databaseBuilder(context = get(), klass =  PokemonDatabase::class.java, name = "pokemon.db").fallbackToDestructiveMigration(true).build()
     }
     single {
-        Room.databaseBuilder(context = get(), klass =  SearchDatabase::class.java, name = "search.db").fallbackToDestructiveMigration(true).build()
-    }
-    single {
         get<PokemonDatabase>().dao
     }
-    single {
-        get<SearchDatabase>().dao
-    }
     single<PokemonRepository> {
-        PokemonRepositoryImpl(get(),get(),get())
+        PokemonRepositoryImpl(get(),get())
     }
     viewModel {
         ListViewModel(get())
