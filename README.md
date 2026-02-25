@@ -50,7 +50,7 @@ The app follows MVVM with a unidirectional data flow. The UI never talks to the 
 
 > **🚨 The Challenge:** > Paging 3 relies heavily on Room's Invalidation Tracker to know when to refresh the UI. Initially, whenever the background `SyncWorker` updated the local cache or a search query was executed, Room would automatically invalidate the shared tables. This caused the main `Pager` to emit a redundant loading state, resulting in jarring "double loading" screens and interrupting the Compose UI animations.
 
-**🛠️ The Solution:** I engineered a decoupled database architecture. By isolating the Search mechanism into its own dedicated table structure, completely separate from the main Paging 3 database, I severed the invalidation link. Now, background syncs and search queries update their respective data silos without triggering false invalidations on the main paged list. The result? A buttery-smooth, glitch-free UI that never loads the same data twice.
+**🛠️ The Solution:** I engineered a decoupled database architecture. By isolating the Search mechanism into its own dedicated table structure, completely separate from the main Pokemon Table (Paging Source), I severed the invalidation link. Now, background syncs and search queries update their respective data silos without triggering false invalidations on the main paged list. The result? A buttery-smooth, glitch-free UI that never loads the same data twice.
 
 ### 🧠 3. Why GraphQL Over the REST Endpoint
 
