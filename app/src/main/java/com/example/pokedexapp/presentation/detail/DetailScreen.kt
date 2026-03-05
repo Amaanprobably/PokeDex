@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -40,6 +42,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -69,11 +72,12 @@ fun SharedTransitionScope.DetailScreen(
     onRetry: () -> Unit,
 ) {
     var pokemon: Pokemon? by remember { mutableStateOf(null) }
-
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val horizontalPadding = if (screenWidth > 600) (screenWidth / 5).dp else 24.dp
     when (state) {
         is UiState.Success -> pokemon = state.pokemon
         is UiState.Loading -> LoadingScreen()
-        is UiState.Error -> ErrorScreen(state.message) { onRetry() }
+        is UiState.Error -> ErrorScreen(message = state.message) { onRetry() }
     }
 
     if (pokemon != null) {
@@ -82,7 +86,6 @@ fun SharedTransitionScope.DetailScreen(
             animationSpec = tween(durationMillis = 500),
             label = "color"
         )
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -98,7 +101,8 @@ fun SharedTransitionScope.DetailScreen(
                             MaterialTheme.colorScheme.surface
                         )
                     )
-                ),
+                )
+                .verticalScroll(rememberScrollState()),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -116,7 +120,7 @@ fun SharedTransitionScope.DetailScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = horizontalPadding)
                     .padding(bottom = 32.dp, top = 90.dp),
                 contentAlignment = Alignment.BottomCenter
             ) {
@@ -140,7 +144,6 @@ fun SharedTransitionScope.DetailScreen(
                             .offset(y = (-90).dp)
                             .renderInSharedTransitionScopeOverlay { animatedVisibilityScope.transition.targetState == EnterExitState.Visible }
                     )
-
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
