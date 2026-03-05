@@ -29,7 +29,6 @@ import com.example.pokedexapp.presentation.list.ListViewModel
 import com.example.pokedexapp.presentation.navigation.Routes
 import com.example.pokedexapp.presentation.theme.PokeDexAppTheme
 import org.koin.androidx.compose.koinViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
 
 class MainActivity : ComponentActivity(), KoinComponent {
@@ -38,7 +37,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
         enableEdgeToEdge()
         setContent {
             val workManager = WorkManager.getInstance(applicationContext)
-            val viewModel: ListViewModel by viewModel()
+            val listViewModel: ListViewModel = koinViewModel()
 
             val workInfos by workManager
                 .getWorkInfosForUniqueWorkLiveData("PokemonSearchSync")
@@ -49,7 +48,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
                 if (currentWork?.state == WorkInfo.State.SUCCEEDED) {
                     Log.d("PokedexSync","PokemonSearchSync finished. Refreshing list")
-                    viewModel.refresh()
+                    listViewModel.refresh()
                 }
             }
             PokeDexAppTheme {
@@ -61,10 +60,9 @@ class MainActivity : ComponentActivity(), KoinComponent {
                     )
                     {
                         composable(Routes.POKEMON_LIST_SCREEN.route) {
-                            val viewModel: ListViewModel = koinViewModel()
                             val pokemonList =
-                                viewModel.pokemonPagingFlow.collectAsLazyPagingItems()
-                            val searchList by viewModel.searchResults.collectAsStateWithLifecycle(
+                                listViewModel.pokemonPagingFlow.collectAsLazyPagingItems()
+                            val searchList by listViewModel.searchResults.collectAsStateWithLifecycle(
                                 initialValue = emptyList()
                             )
                             ListScreen(
@@ -83,7 +81,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                 },
                                 pokemonList = pokemonList,
                                 onSearch = { query ->
-                                    viewModel.searchPokemon(query)
+                                    listViewModel.searchPokemon(query)
                                 },
                                 searchList = searchList
                             )
@@ -102,8 +100,8 @@ class MainActivity : ComponentActivity(), KoinComponent {
                             )
                         )
                         { backStackEntry ->
-                            val viewModel: DetailViewModel = koinViewModel()
-                            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                            val detailViewModel: DetailViewModel = koinViewModel()
+                            val uiState by detailViewModel.uiState.collectAsStateWithLifecycle()
                             val id = remember {
                                 backStackEntry.arguments?.getInt("id") ?: 0
                             }
@@ -117,7 +115,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                 origin = origin,
                                 onBack = { navController.popBackStack() }
                             ) {
-                                viewModel.retry()
+                                detailViewModel.retry()
                             }
                         }
                     }
