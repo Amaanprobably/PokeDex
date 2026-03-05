@@ -1,5 +1,6 @@
 package com.example.pokedexapp.presentation.components
 
+import android.media.DeniedByServerException
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -17,10 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.io.IOException
 
 sealed class UiState<out T> {
     object Loading : UiState<Nothing>()
@@ -53,20 +57,23 @@ fun LoadingScreen(padding: PaddingValues = PaddingValues(32.dp)) {
 
 @Composable
 fun ErrorScreen(
+    modifier: Modifier = Modifier,
     message: String?,
     Retry: () -> Unit
 ){
-    Column(modifier = Modifier.fillMaxSize(),
+    Column(modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = message ?: "Unknown Error Occurred",
-            fontSize = 26.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            maxLines = 2
+            maxLines = 2,
+            color = Color.DarkGray,
+            textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+        Spacer(modifier = modifier.fillMaxHeight(0.2f).heightIn(min = 10.dp))
         Button(onClick = { Retry() })
         {
             Text(
@@ -75,5 +82,12 @@ fun ErrorScreen(
                 fontWeight = FontWeight.Medium
             )
         }
+    }
+}
+fun Throwable.toUserFriendlyMessage(): String {
+    return when (this) {
+        is IOException -> "Check your internet connection\nand try again."
+        is DeniedByServerException -> "The server is having trouble.\nPlease try again later"
+        else -> this.localizedMessage ?: "An unexpected error occurred."
     }
 }
