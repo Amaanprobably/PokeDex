@@ -79,9 +79,8 @@ I chose Koin for this project because it has zero annotation processing overhead
 * **Image Loading:** Coil (with Shared Element support)
 * **Background Tasks:** WorkManager
 
-## 🗺️ Future Scope & Known Issues
-* **Responsive Layouts:** The current UI is specifically optimized for standard portrait-mode mobile phones. Dynamic screen-size scaling (utilizing percentage-based modifiers and adaptive layouts for tablets or foldables) is planned for a future update.
-* **Orientation:** Landscape mode is currently unoptimized to preserve the fidelity of the Shared Element Transitions.
+## 🗺️ Future Scope 
+* **Battle Simulator:** A turn-based combat engine designed to replicate the mechanics and logic of the core Pokémon RPG series.
 
 ## 🏗 Setup & Installation
 
