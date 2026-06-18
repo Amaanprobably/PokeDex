@@ -73,7 +73,7 @@ fun ErrorScreen(
             color = Color.DarkGray,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = modifier.fillMaxHeight(0.2f).heightIn(min = 10.dp))
+        Spacer(modifier = modifier.fillMaxHeight(0.1f).heightIn(min = 10.dp,max=40.dp))
         Button(onClick = { Retry() })
         {
             Text(
