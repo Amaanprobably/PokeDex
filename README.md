@@ -7,7 +7,15 @@
 A modern, robust Android application that displays Pokémon data using the PokéAPI via GraphQL. 
 
 
-> **[⬇ Download APK](https://github.com/Amaanprobably/PokeDex/releases/download/v1.0.0/app-releasev1.0.apk)** — Install directly on any Android device (API 26+)
+> **[⬇ Download APK](https://github.com/Amaanprobably/PokeDex/releases/download/v1.0.2/app-release-v1.2.apk)** — Install directly on any Android device (API 26+)
+
+---
+
+## 📱 Demo
+
+
+https://github.com/user-attachments/assets/8450da5f-d9c8-416a-8a86-b2318ebc1f8e
+
 
 ---
 
