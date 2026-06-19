@@ -67,19 +67,21 @@ fun ErrorScreen(
     ) {
         Text(
             text = message ?: "Unknown Error Occurred",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.SemiBold,
             maxLines = 2,
+            lineHeight = 40.sp,
             color = Color.DarkGray,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = modifier.fillMaxHeight(0.1f).heightIn(min = 10.dp,max=40.dp))
+        Spacer(modifier = modifier.fillMaxHeight(0.075f).heightIn(min = 10.dp))
         Button(onClick = { Retry() })
         {
             Text(
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
                 text = "Retry",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }

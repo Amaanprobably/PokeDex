@@ -63,6 +63,16 @@ class PokemonRepositoryImpl(
                 )
                 response.data?.pokemon?.firstOrNull()?.let { gql ->
 
+                    // Detect broken GraphQL response (Temporary Fix)
+                    if (gql.types.isEmpty() || gql.stats.size<6) {
+                        Log.e(
+                            "PokemonDetails",
+                            "Invalid pokemon data received. Types=${gql.types.size}, Stats=${gql.stats.size}"
+                        )
+                        emit(null)
+                        return@let
+                    }
+
                     val entity = gql.toEntity()
 
                     db.dao.insertPokemon(entity)

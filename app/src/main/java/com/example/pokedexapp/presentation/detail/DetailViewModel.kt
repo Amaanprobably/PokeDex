@@ -30,7 +30,7 @@ class DetailViewModel(
         .map { pokemon ->
             when {
                 pokemon != null && pokemon.hp > 0 -> UiState.Success(pokemon)
-                pokemon == null -> UiState.Error("Failed to load details")
+                pokemon == null -> UiState.Error("Failed to load details \nTry again later!")
                 else -> UiState.Loading
             }
         }
