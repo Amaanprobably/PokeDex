@@ -30,8 +30,11 @@ fun PokemonGql.toEntity(): PokemonEntity {
     val typeList = this.types.map { it.type.name }
     val primaryType = typeList.firstOrNull() ?: "normal"
     val typeColor = getPokemonColor(primaryType).toArgb()
+    // Change: this.sprites.toString() → Gson().toJson(this.sprites).
+    // Why? -> .toString() gives you Kotlin's default Sprites(other=OtherSprites(...)) format — not JSON,
+    // so Gson.fromJson throws, lands in the catch, and spritesDto is always null.
     val spritesDto = try {
-        Gson().fromJson(this.sprites.toString(), Sprites::class.java)
+        Gson().fromJson(Gson().toJson(this.sprites), Sprites::class.java)
     } catch (e: Exception){
         Timber.tag("SpriteFetching").d(e.localizedMessage)
         null

@@ -97,6 +97,12 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.kotlinx.coroutines.android)
 
+    // Tests
+    testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation("androidx.paging:paging-testing:3.3.0")
+    testImplementation("app.cash.turbine:turbine:1.1.0")
+    testImplementation("androidx.room:room-testing:2.6.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
