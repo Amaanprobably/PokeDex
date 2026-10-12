@@ -19,13 +19,22 @@ https://github.com/user-attachments/assets/8450da5f-d9c8-416a-8a86-b2318ebc1f8e
 
 ---
 
-## 📸 Screenshots
+## 📸 Screenshots (Portrait Mode)
 
-<img src="https://github.com/user-attachments/assets/3de5851e-1792-45df-844e-f41891a9d437" width="30%" />
+<img src="https://github.com/user-attachments/assets/6e01f21b-efb5-420b-bc15-b8e400d762bb" width="30%" />
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img src="https://github.com/user-attachments/assets/e5554614-98f3-4436-902f-a040d1f14b0c" width="30%" />
 &nbsp; &nbsp; &nbsp; &nbsp;
-<img src="https://github.com/user-attachments/assets/e24a752d-53c6-44dd-bd6a-1ffc51712e49" width="30%" />
+<img src="https://github.com/user-attachments/assets/32a084d2-bee8-4089-986e-8c4b8e2a1c50" width="30%" />
+
+
+## 📸 Screenshots (Landscape Mode)
+
+<img src="https://github.com/user-attachments/assets/ecf299a7-0f4d-4c22-a8ac-2a97a35295c3" width="49%" />
+<img src="https://github.com/user-attachments/assets/ccabdc7e-721d-4bb2-9c5e-e6d7d7a3d155" width="49%" />
+
+
+
 
 ---
 
